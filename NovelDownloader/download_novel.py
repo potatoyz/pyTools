@@ -10,7 +10,7 @@ import sys
 import types
 import threading
 
-MAX_THREADS = 30
+MAX_THREADS = 45
 semaphore = threading.Semaphore(MAX_THREADS)
 event = threading.Event()
 
@@ -59,7 +59,7 @@ class download(object):
                         download_url = self.url + child.a.get('href')
                         download_name = child.string
                         name = str(download_name)
-                        #print(numbers)
+                        # print(numbers)
                         #import pdb;pdb.set_trace()
                         download_dict[name] = download_url
                         numbers += 1
@@ -77,7 +77,10 @@ class download(object):
 
     def get_text(self, charter_num, url, index=0):
         download_req = request.Request(url=url, headers=self.__head)
-        download_response = request.urlopen(download_req)
+        try:
+            download_response = request.urlopen(download_req)
+        except:
+            return "章节错误"
         download_html = download_response.read().decode('gbk', 'ignore')
         soup_texts = BeautifulSoup(download_html, 'lxml')
         texts = soup_texts.find_all(id='content')
@@ -103,7 +106,7 @@ class download(object):
 
     def Writer(self, name):
         path = f"./novels/{name}"
-        if name in os.listdir("./novels/"):
+        if name in os.listdir("novels"):
             os.remove(path)
         content_dic = sorted(self.final_text.items(),
                              key=lambda k: (k[1]["index"]))
