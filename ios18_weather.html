@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>iOS18 Weather Cards</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #dbe6f6, #c5796d);
+        font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+        overflow: hidden;
+    }
+    .weather-container {
+        display: flex;
+        gap: 20px;
+    }
+    .card {
+        width: 180px;
+        height: 260px;
+        border-radius: 25px;
+        background: rgba(255,255,255,0.4);
+        backdrop-filter: blur(15px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+    .card:hover {
+        transform: scale(1.05);
+    }
+    .icon {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        margin-bottom: 20px;
+    }
+    .label {
+        font-size: 18px;
+        font-weight: 600;
+    }
+    .details {
+        margin-top: 10px;
+        font-size: 12px;
+        display: none;
+    }
+    .card.active .details {
+        display: block;
+    }
+
+    /* Sunny */
+    .sunny .icon {
+        background: #FFD93B;
+        border-radius: 50%;
+        box-shadow: 0 0 20px rgba(255,217,59,0.8);
+    }
+    .sunny .icon:before {
+        content: "";
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 120%; height: 120%;
+        background: conic-gradient(from 0deg, #FFD93B 0deg 20deg, transparent 20deg 40deg);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        animation: spin 8s linear infinite;
+    }
+
+    @keyframes spin {
+        from {transform: translate(-50%, -50%) rotate(0deg);}
+        to {transform: translate(-50%, -50%) rotate(360deg);}
+    }
+
+    /* Windy */
+    .windy .icon { overflow: hidden; }
+    .windy .icon .line {
+        position: absolute;
+        width: 60px; height: 8px;
+        border-radius: 4px;
+        background: rgba(255,255,255,0.9);
+        left: 0;
+        animation: blow 2s ease-in-out infinite;
+    }
+    .windy .icon .line:nth-child(1) { top: 10px; animation-delay: 0s; }
+    .windy .icon .line:nth-child(2) { top: 30px; animation-delay: 0.2s; }
+    .windy .icon .line:nth-child(3) { top: 50px; animation-delay: 0.4s; }
+
+    @keyframes blow {
+        0% { transform: translateX(-20px); }
+        50% { transform: translateX(20px); }
+        100% { transform: translateX(-20px); }
+    }
+
+    /* Rainy */
+    .rainy .icon { overflow: hidden; }
+    .rainy .icon .drop {
+        position: absolute;
+        width: 4px; height: 12px;
+        background: #4A90E2;
+        border-radius: 2px;
+        left: 50%;
+        animation: rain 1s linear infinite;
+    }
+    .rainy .icon .drop:nth-child(1) { left: 20px; animation-delay: 0s; }
+    .rainy .icon .drop:nth-child(2) { left: 40px; animation-delay: 0.2s; }
+    .rainy .icon .drop:nth-child(3) { left: 60px; animation-delay: 0.4s; }
+
+    @keyframes rain {
+        0% { top: -10px; opacity: 1; }
+        100% { top: 70px; opacity: 0; }
+    }
+
+    /* Snow */
+    .snow .icon { overflow: hidden; }
+    .snow .icon .flake {
+        position: absolute;
+        width: 8px; height: 8px;
+        background: white;
+        border-radius: 50%;
+        left: 50%;
+        animation: snow 3s linear infinite;
+    }
+    .snow .icon .flake:nth-child(1) { left: 20px; animation-delay: 0s; }
+    .snow .icon .flake:nth-child(2) { left: 40px; animation-delay: 0.6s; }
+    .snow .icon .flake:nth-child(3) { left: 60px; animation-delay: 1.2s; }
+
+    @keyframes snow {
+        0% { top: -10px; opacity: 1; transform: translateX(0); }
+        100% { top: 70px; opacity: 0; transform: translateX(10px); }
+    }
+</style>
+</head>
+<body>
+<div class="weather-container">
+    <div class="card sunny" onclick="toggleCard(this)">
+        <div class="icon"></div>
+        <div class="label">晴天</div>
+        <div class="details">温度: 26°C</div>
+    </div>
+    <div class="card windy" onclick="toggleCard(this)">
+        <div class="icon">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+        <div class="label">大风</div>
+        <div class="details">风速: 20km/h</div>
+    </div>
+    <div class="card rainy" onclick="toggleCard(this)">
+        <div class="icon">
+            <div class="drop"></div>
+            <div class="drop"></div>
+            <div class="drop"></div>
+        </div>
+        <div class="label">暴雨</div>
+        <div class="details">降水: 50mm</div>
+    </div>
+    <div class="card snow" onclick="toggleCard(this)">
+        <div class="icon">
+            <div class="flake"></div>
+            <div class="flake"></div>
+            <div class="flake"></div>
+        </div>
+        <div class="label">暴雪</div>
+        <div class="details">积雪: 15cm</div>
+    </div>
+</div>
+<script>
+function toggleCard(el) {
+    el.classList.toggle('active');
+}
+</script>
+</body>
+</html>
